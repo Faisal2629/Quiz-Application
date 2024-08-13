@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .quiz-container {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+      }
+      .quiz-container h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      .question {
+        margin-bottom: 20px;
+      }
+      .question h2 {
+        font-size: 18px;
+      }
+      .answers label {
+        display: block;
+        margin-bottom: 10px;
+      }
+      .submit-button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      .restart-button {
+        background-color: #28a745;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+      .score {
+        font-size: 20px;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+  <script src="https://www.unpkg.com/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://www.unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState } = React;
+
+    function Quiz() {
+      const questions = [
+        {
+          questionText: "What is the capital of France?",
+          options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+          correctAnswer: "Paris",
+        },
+        {
+          questionText: "Which planet is known as the Red Planet?",
+          options: ["Earth", "Mars", "Jupiter", "Venus"],
+          correctAnswer: "Mars",
+        },
+        {
+          questionText: "Who wrote 'To Kill a Mockingbird'?",
+          options: ["Harper Lee", "J.K. Rowling", "Ernest Hemingway", "Mark Twain"],
+          correctAnswer: "Harper Lee",
+        },
+      ];
+
+      // State to manage selected answers
+      const [selectedAnswers, setSelectedAnswers] = useState({});
+      // State to manage the score
+      const [score, setScore] = useState(null);
+
+      // Handle answer selection
+      const handleAnswerChange = (questionIndex, answer) => {
+        setSelectedAnswers({ ...selectedAnswers, [questionIndex]: answer });
+      };
+
+      // Handle quiz submission
+      const handleSubmit = () => {
+        let score = 0;
+        questions.forEach((question, index) => {
+          if (selectedAnswers[index] === question.correctAnswer) {
+            score += 1;
+          }
+        });
+        setScore(score);
+      };
+
+      // Handle quiz restart
+      const handleRestart = () => {
+        setSelectedAnswers({});
+        setScore(null);
+      };
+
+      return (
+        <div className="quiz-container">
+          {score === null ? (
+            <div>
+              <h1>Quiz</h1>
+              {questions.map((question, index) => (
+                <div key={index} className="question">
+                  <h2>{question.questionText}</h2>
+                  <div className="answers">
+                    {question.options.map((option, optionIndex) => (
+                      <label key={optionIndex}>
+                        <input
+                          type="radio"
+                          name={`question-${index}`}
+                          value={option}
+                          checked={selectedAnswers[index] === option}
+                          onChange={() => handleAnswerChange(index, option)}
+                        />
+                        {option}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <button className="submit-button" onClick={handleSubmit}>
+                Submit
+              </button>
+            </div>
+          ) : (
+            <div>
+              <h1>Your Score</h1>
+              <p className="score">
+                You scored {score} out of {questions.length}.
+              </p>
+              <button className="restart-button" onClick={handleRestart}>
+                Restart Quiz
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Render the Quiz component into the root div
+    ReactDOM.render(<Quiz />, document.getElementById("root"));
+  </script>
+</html>
